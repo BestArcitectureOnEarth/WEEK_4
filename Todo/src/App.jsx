@@ -1,8 +1,10 @@
 import "./App.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Header from "./components/Header";
 import Editor from "./components/Editor";
 import List from "./components/List";
+
+import { PseudoAPI } from "./pseudoApi/pseudoApi";
 
 const mockDate = [
   {
@@ -25,11 +27,29 @@ const mockDate = [
   },
 ];
 
+// 서버 초기화
+if (!localStorage.getItem("todo_items")) {
+  localStorage.setItem("todo_items", JSON.stringify(mockDate));
+}
+console.log(
+  "서버 초기화 완료!",
+  JSON.parse(localStorage.getItem("todo_items"))
+);
+
 function App() {
-  const [todos, setTodos] = useState(mockDate);
+  const [sholdRerender, setShouldRerender] = useState(0);
+  const [todos, setTodos] = useState([]);
   const idRef = useRef(3);
 
-  const onCreate = (content) => {
+  useEffect(() => {
+    console.log("useEffect 실행");
+    PseudoAPI.getAll().then((fetchedTodos) => {
+      setTodos(fetchedTodos);
+      idRef.current = fetchedTodos.length;
+    });
+  }, [sholdRerender]);
+
+  const onCreate = async (content) => {
     const newTodo = {
       id: idRef.current++,
       isDone: false,
@@ -37,9 +57,12 @@ function App() {
       date: new Date().getTime(),
     };
 
-    setTodos([newTodo, ...todos]);
+    await PseudoAPI.create(newTodo);
+    setShouldRerender((prev) => prev + 1);
+    console.log("rerender", sholdRerender);
   };
 
+  // 아직 서버에 업데이트 기능이 없음
   const onUpdate = (targetId) => {
     setTodos(
       todos.map((todo) =>
@@ -49,7 +72,8 @@ function App() {
   };
 
   const onDelete = (targetId) => {
-    setTodos(todos.filter((todo) => todo.id !== targetId));
+    PseudoAPI.delete(targetId);
+    setShouldRerender((prev) => prev + 1);
   };
 
   return (
