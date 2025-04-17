@@ -1,55 +1,38 @@
 import "./App.css";
-import { useState, useRef } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Editor from "./components/Editor";
 import List from "./components/List";
-
-const mockDate = [
-  {
-    id: 0,
-    isDone: false,
-    content: "React 공부하기",
-    date: new Date().getTime(),
-  },
-  {
-    id: 1,
-    isDone: false,
-    content: "빨래하기",
-    date: new Date().getTime(),
-  },
-  {
-    id: 2,
-    isDone: false,
-    content: "노래 연습하기",
-    date: new Date().getTime(),
-  },
-];
+import TodoStore from "./store/TodoStore";
+import TodoFactory from "./factory/TodoFactory";
 
 function App() {
-  const [todos, setTodos] = useState(mockDate);
-  const idRef = useRef(3);
+  const [todos, setTodos] = useState(TodoFactory.createInitialTodos());
+  const todoStore = TodoStore.getInstance();
 
-  const onCreate = (content) => {
-    const newTodo = {
-      id: idRef.current++,
-      isDone: false,
-      content: content,
-      date: new Date().getTime(),
+  useEffect(() => {
+    // 초기 데이터 설정
+    todoStore.setTodos(todos);
+
+    // App의 setTodos 함수를 관찰자로 등록
+    todoStore.subscribe(setTodos);
+
+    return () => {
+      todoStore.unsubscribe(setTodos);
     };
+  }, []);
 
-    setTodos([newTodo, ...todos]);
+  const onCreate = (content, type = "DEFAULT") => {
+    const newTodo = TodoFactory.create(type, content);
+    todoStore.addTodo(newTodo);
   };
 
   const onUpdate = (targetId) => {
-    setTodos(
-      todos.map((todo) =>
-        todo.id === targetId ? { ...todo, isDone: !todo.isDone } : todo
-      )
-    );
+    todoStore.updateTodo(targetId);
   };
 
   const onDelete = (targetId) => {
-    setTodos(todos.filter((todo) => todo.id !== targetId));
+    todoStore.deleteTodo(targetId);
   };
 
   return (

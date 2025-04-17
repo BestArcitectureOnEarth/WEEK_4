@@ -1,20 +1,35 @@
 .Editor {
   display: flex;
   gap: 10px;
+  padding: 20px;
 }
 
 .Editor input {
   flex: 1;
-  padding: 15px;
-  border: 1px solid rgb(220, 220, 220);
-  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.Editor .type-select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
 }
 
 .Editor button {
-  cursor: pointer;
-  width: 80px;
-  border: none;
-  background-color: rgb(37, 147, 255);
+  padding: 10px 20px;
+  background-color: #1a73e8;
   color: white;
-  border-radius: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.Editor button:hover {
+  background-color: #1557b0;
 }
