@@ -1,0 +1,18 @@
+# Next.js 빌드 폴더
+.next
+
+# Node.js 의존성 폴더
+node_modules
+
+# 환경 변수 파일
+.env
+
+# 로그 파일
+*.log
+
+# 운영 체제 관련 파일들
+.DS_Store
+Thumbs.db
+
+# Python 가상 환경 폴더
+venv
