@@ -1,6 +1,11 @@
-# Todo 애플리케이션
+Todo 개선점
 
-React로 구현한 Todo 애플리케이션입니다. 디자인 패턴을 활용하여 확장성과 유지보수성을 높였습니다.
+1. idRef.current 불러오는 방법 reduce 함수를 사용하여 개선
+2. onDelete 에서도 async await 적용
+3. useTodos 커스텀훅 분리
+4. shouldRerender 대신 fetchTodos() + useCallback 을 사용하여 데이터 패치 명시적 호출
+
+# Todo 애플리케이션
 
 ## 주요 기능
 
