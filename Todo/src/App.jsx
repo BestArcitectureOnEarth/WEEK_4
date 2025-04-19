@@ -5,6 +5,8 @@ import Editor from "./components/Editor";
 import List from "./components/List";
 
 import { PseudoAPI } from "./pseudoApi/pseudoApi";
+import { TodoFactory } from "./utils/TOdoFactory";
+import { TodoCommands } from "./command/todoCommand";
 
 const mockDate = [
   {
@@ -13,12 +15,7 @@ const mockDate = [
     content: "React 공부하기",
     date: new Date().getTime(),
   },
-  {
-    id: 1,
-    isDone: false,
-    content: "빨래하기",
-    date: new Date().getTime(),
-  },
+  { id: 1, isDone: false, content: "빨래하기", date: new Date().getTime() },
   {
     id: 2,
     isDone: false,
@@ -27,53 +24,66 @@ const mockDate = [
   },
 ];
 
-// 서버 초기화
 if (!localStorage.getItem("todo_items")) {
   localStorage.setItem("todo_items", JSON.stringify(mockDate));
+  console.log(
+    "서버 초기화 완료!",
+    JSON.parse(localStorage.getItem("todo_items"))
+  );
 }
-console.log(
-  "서버 초기화 완료!",
-  JSON.parse(localStorage.getItem("todo_items"))
-);
 
 function App() {
   const [sholdRerender, setShouldRerender] = useState(0);
   const [todos, setTodos] = useState([]);
-  const idRef = useRef(3);
+
+  // 커맨드 패턴
+  const todoCommands = TodoCommands(PseudoAPI, setShouldRerender);
 
   useEffect(() => {
-    console.log("useEffect 실행");
     PseudoAPI.getAll().then((fetchedTodos) => {
       setTodos(fetchedTodos);
-      idRef.current = fetchedTodos.length;
+      TodoFactory.reset(fetchedTodos.length); // 생성 책임 분리=>단일 책임 원칙
     });
   }, [sholdRerender]);
 
+  // 커맨드 패턴 + 팩토리 패턴
+  const onCreate = async (content) => {
+    const newTodo = TodoFactory.create(content); // 객체 생성 책임 분리
+    await todoCommands.create(newTodo); // 커맨드
+  };
+
+  /*
   const onCreate = async (content) => {
     const newTodo = {
       id: idRef.current++,
       isDone: false,
-      content: content,
+      content,
       date: new Date().getTime(),
     };
 
     await PseudoAPI.create(newTodo);
     setShouldRerender((prev) => prev + 1);
-    console.log("rerender", sholdRerender);
+  };
+  */
+
+  //  커맨드 패턴
+  const onDelete = (id) => {
+    todoCommands.delete(id); // 명령 호출
   };
 
-  // 아직 서버에 업데이트 기능이 없음
+  /*
+  const onDelete = (targetId) => {
+    PseudoAPI.delete(targetId);
+    setShouldRerender((prev) => prev + 1);
+  };
+  */
+
   const onUpdate = (targetId) => {
     setTodos(
       todos.map((todo) =>
         todo.id === targetId ? { ...todo, isDone: !todo.isDone } : todo
       )
     );
-  };
-
-  const onDelete = (targetId) => {
-    PseudoAPI.delete(targetId);
-    setShouldRerender((prev) => prev + 1);
   };
 
   return (
