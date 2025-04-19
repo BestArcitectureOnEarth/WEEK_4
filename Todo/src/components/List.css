@@ -4,16 +4,41 @@
   gap: 20px;
 }
 
-.List > input {
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid rgb(220, 220, 200);
-  padding: 15px 0px;
+.InnerList {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
 }
 
-.List > input:focus {
+.InnerList input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.InnerList input[type="text"] {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid rgb(220, 220, 200);
+  padding: 10px 10px;
+  font-size: 16px;
+}
+
+.InnerList input[type="text"]:focus {
   outline: none;
   border-bottom: 1px solid rgb(37, 147, 255);
+}
+
+.InnerList button {
+  cursor: pointer;
+  color: gray;
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  width: 15%;
 }
 
 .List .todos_wrapper {

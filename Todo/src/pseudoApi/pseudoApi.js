@@ -27,13 +27,12 @@ export const PseudoAPI = {
       }, 300);
     }),
 
-  // 현재 코드에서는 사용 안 함
-  update: (id, newContent) =>
+  update: (id, updatedItem) =>
     new Promise((resolve) => {
       setTimeout(() => {
         const items = loadFromStorage();
         const updated = items.map((item) =>
-          item.id === id ? { ...item, content: newContent } : item
+          item.id === id ? updatedItem : item
         );
         saveToStorage(updated);
         resolve(updated.find((i) => i.id === id) ?? null);
